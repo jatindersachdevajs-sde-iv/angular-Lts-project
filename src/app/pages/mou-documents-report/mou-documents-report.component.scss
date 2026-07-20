@@ -1,0 +1,234 @@
+// // ---------------------------------------------------------------------
+// // Theme tokens
+// // ---------------------------------------------------------------------
+// $brand: #FD6C04;
+// $brand-dark: #d95a00;
+// $ink: #1f2430;
+// $muted: #6b7280;
+// $border: #e5e7eb;
+// $surface: #ffffff;
+// $surface-soft: #f8f9fb;
+
+// // Feed the same palette into the reusable <app-dual-scroll-grid> shell via
+// // its themeable custom properties, so both grid instances on this page
+// // stay visually consistent with the rest of the component without the
+// // shared component needing to know about this page's SCSS variables.
+// :host {
+//   --dsg-accent: #{$brand};
+//   --dsg-border: #{$border};
+//   --dsg-surface: #{$surface};
+//   --dsg-surface-soft: #{$surface-soft};
+// }
+
+// // ---------------------------------------------------------------------
+// // Tabs
+// // ---------------------------------------------------------------------
+// #nav-tab {
+//   gap: 0.5rem;
+//   border-bottom: 1px solid $border;
+
+//   .btn {
+//     color: $ink;
+//     background-color: $surface;
+//     border: 1px solid $border;
+//     border-bottom: none;
+//     border-radius: 8px 8px 0 0;
+//     font-weight: 600;
+//     letter-spacing: 0.2px;
+//     transition: background-color .15s ease, color .15s ease;
+
+//     &.active {
+//       background-color: $brand;
+//       color: #fff;
+//       border-color: $brand;
+//     }
+
+//     &:hover:not(.active) {
+//       background-color: $surface-soft;
+//     }
+//   }
+// }
+
+// // ---------------------------------------------------------------------
+// // Top page header bar (kept, employee/department details removed)
+// // ---------------------------------------------------------------------
+// .page-header-bar {
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+//   background: linear-gradient(90deg, $ink 0%, #333c4d 100%);
+//   color: #fff;
+//   border-radius: 10px;
+//   padding: 1rem 1.5rem;
+//   margin-bottom: 1rem;
+//   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
+//   .page-header-title {
+//     display: flex;
+//     align-items: center;
+//     gap: 0.65rem;
+//     font-size: 1.15rem;
+//     font-weight: 700;
+//     letter-spacing: 0.2px;
+
+//     i {
+//       font-size: 1.35rem;
+//       color: $brand;
+//     }
+//   }
+
+//   .page-header-subtitle {
+//     font-size: 0.8rem;
+//     color: rgba(255, 255, 255, 0.7);
+//     font-weight: 400;
+//     margin-top: 2px;
+//   }
+// }
+
+// // ---------------------------------------------------------------------
+// // Filter toolbar
+// // ---------------------------------------------------------------------
+// .filter-toolbar {
+//   background: $surface;
+//   border: 1px solid $border;
+//   border-radius: 10px;
+//   padding: 1rem 1.25rem;
+//   margin-bottom: 1rem;
+//   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+
+//   label.filter-label {
+//     font-size: 0.72rem;
+//     text-transform: uppercase;
+//     letter-spacing: 0.4px;
+//     color: $muted;
+//     font-weight: 700;
+//     margin-bottom: 0.3rem;
+//   }
+
+//   .form-select,
+//   .form-control {
+//     border-radius: 8px;
+//     border-color: $border;
+
+//     &:focus {
+//       border-color: $brand;
+//       box-shadow: 0 0 0 0.2rem rgba(253, 108, 4, 0.15);
+//     }
+//   }
+// }
+
+// .summary-badges {
+//   .badge {
+//     font-weight: 600;
+//     padding: 0.5em 0.85em;
+//     border-radius: 999px;
+//   }
+// }
+
+// // ---------------------------------------------------------------------
+// // ngx-datatable theming inside <app-dual-scroll-grid>. The grid shell
+// // itself (border/scrollbars/top-mirrored scrollbar) lives in the reusable
+// // component's own styles; this page only themes ngx-datatable's internals,
+// // which render through the library's own view encapsulation and so need
+// // ::ng-deep to reach from here.
+// // ---------------------------------------------------------------------
+// ::ng-deep .ngx-datatable {
+//   box-shadow: none;
+
+//   // ngx-datatable owns horizontal scrolling internally (scrollbarH="true").
+//   // overflow-x is forced to "scroll" (not "auto") so the horizontal
+//   // scrollbar is ALWAYS visible/reserved at the bottom of the grid,
+//   // even on systems with overlay/auto-hide native scrollbars.
+//   .datatable-body {
+//     overflow-x: scroll !important;
+//     overflow-y: hidden !important;
+//     scrollbar-width: thin;
+//     scrollbar-color: $brand $surface-soft;
+
+//     &::-webkit-scrollbar {
+//       width: 12px;
+//       height: 14px;
+//     }
+
+//     &::-webkit-scrollbar-track {
+//       background: $surface-soft;
+//     }
+
+//     &::-webkit-scrollbar-thumb {
+//       background-color: $brand;
+//       border-radius: 8px;
+//       border: 3px solid $surface-soft;
+//     }
+//   }
+
+//   .datatable-header {
+//     position: sticky;
+//     top: 0;
+//     z-index: 2;
+//     background: $surface-soft;
+
+//     .datatable-header-cell {
+//       font-weight: 700;
+//       font-size: 0.78rem;
+//       text-transform: uppercase;
+//       letter-spacing: 0.3px;
+//       color: $ink;
+//     }
+//   }
+
+//   .datatable-body-row {
+//     border-bottom: 1px solid $border;
+
+//     &:hover {
+//       background-color: rgba(253, 108, 4, 0.05);
+//     }
+//   }
+
+//   .datatable-footer {
+//     position: sticky;
+//     bottom: 0;
+//     background: $surface;
+//     border-top: 1px solid $border;
+//   }
+// }
+
+// // ---------------------------------------------------------------------
+// // Buttons / misc
+// // ---------------------------------------------------------------------
+// .btn {
+//   border-radius: 8px;
+// }
+
+// .card {
+//   border: 1px solid $border;
+//   border-radius: 10px;
+// }
+
+// // ---------------------------------------------------------------------
+// // Shared grid cell typography (replaces repeated inline styles)
+// // ---------------------------------------------------------------------
+// .cell-value {
+//   display: block;
+//   padding: 10px;
+//   font-weight: 500;
+//   color: $ink;
+// }
+
+// .cell-muted {
+//   display: block;
+//   padding: 10px;
+//   color: #b45309;
+//   font-weight: 500;
+// }
+
+// .division-list {
+//   list-style: none;
+//   padding: 0;
+//   margin: 0;
+//   display: inline;
+
+//   li {
+//     display: inline;
+//     font-weight: 500;
+//   }
+// }

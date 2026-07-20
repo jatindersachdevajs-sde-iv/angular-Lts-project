@@ -1,0 +1,147 @@
+<div class="modal-header bg-dark text-white">
+    <h5 class="modal-title">{{isRenewalMode ? 'Renew MOU - ' + mouId : 'MOU Update: MOU/' + mouId}}</h5>
+    <button type="button" class="btn-close btn-close-white" (click)="activeModal.dismiss()"></button>
+</div>
+
+<div class="modal-body bg-light" [formGroup]="mouForm">
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body py-2">
+            <div class="row g-3 mb-4">
+                <div class="col-md-7">
+                    <label class="form-label fw-bold small">Partner Organisation Name</label>
+                    <input type="text" class="form-control" formControlName="mouOrganisation"
+                        [class.is-invalid]="isInvalid('mouOrganisation')">
+                    <div class="invalid-feedback">Organisation name is required.</div>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label fw-bold small">Divisions Involved</label>
+                    <ng-select [items]="allSchoolDivisions" [multiple]="true" bindLabel="schoolDivision"
+                        bindValue="id" formControlName="selectedDivisions"
+                        [class.is-invalid]="isInvalid('selectedDivisions')"></ng-select>
+                    @if (isInvalid('selectedDivisions')) {
+                        <div class="text-danger small mt-1">Select at least one division.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body py-2">
+            <div class="row g-3 mb-4 align-items-end">
+                <div class="col-md-3">
+                    <label class="small fw-bold">Start Date</label>
+                    <input type="date" class="form-control" formControlName="startDate"
+                        (change)="updateMouStatus()">
+                </div>
+                <div class="col-md-3">
+                    <label class="small fw-bold">End Date</label>
+                    <input type="date" class="form-control" formControlName="endDate" (change)="updateMouStatus()">
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check pt-2">
+                        <input class="form-check-input" type="checkbox" id="isIndefinite"
+                            formControlName="isIndefinite" (change)="toggleEndDate()">
+                        <label class="form-check-label small" for="isIndefinite">Indefinite MOU</label>
+                    </div>
+                </div>
+                <div class="col-md-2 text-start">
+                    <span class="badge w-20 p-2"
+                        [ngClass]="moustatus === 'Active' ? 'bg-success' : 'bg-danger'">{{moustatus}}</span>
+                </div>
+                @if (isRenewalMode) {
+                    <div class="col-md-2 text-start">
+                        <label class="small fw-bold">Renewal Remarks</label>
+                        <input type="text" class="form-control" formControlName="remarks">
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body py-2">
+            <h6 class="text-primary small fw-bold text-uppercase mb-3 mt-1">External SPOC (Partner)</h6>
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label class="fw-bold small text-primary small fw-bold text-uppercase mb-3 mt-1">SPOC Name</label>
+                    <input type="text" class="form-control form-control-sm" placeholder="SPOC Name"
+                        formControlName="spocName" [class.is-invalid]="isInvalid('spocName')">
+                </div>
+                <div class="col-md-4">
+                    <label class="fw-bold small text-primary small fw-bold text-uppercase mb-3 mt-1">SPOC Email</label>
+                    <input type="email" class="form-control form-control-sm" placeholder="SPOC Email"
+                        formControlName="spocEmail" [class.is-invalid]="isInvalid('spocEmail')">
+                </div>
+                <div class="col-md-4">
+                    <label class="fw-bold small text-primary small fw-bold text-uppercase mb-3 mt-1">SPOC Contact</label>
+                    <input type="text" class="form-control form-control-sm" placeholder="SPOC Contact"
+                        formControlName="spocContact" [class.is-invalid]="isInvalid('spocContact')">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body py-2">
+            <div class="row mt-3">
+                <div class="col-md-5 position-relative">
+                    <label class="fw-bold small text-primary small fw-bold text-uppercase mb-3 mt-1 ">LPU SPOC Name
+                        (Search) <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" formControlName="lpuSpocName" (input)="onInput2()"
+                        (focus)="showSuggestions = true" placeholder="Search by Name or UID..."
+                        [class.is-invalid]="isInvalid('lpuSpocName')">
+                    <div class="invalid-feedback">LPU SPOC Name is required.</div>
+
+                    @if (showSuggestions && filteredEmployeesData.length) {
+                        <div class="list-group position-absolute w-100 shadow-lg z-3 mt-1">
+                            @for (emp of filteredEmployeesData; track emp.employeeCode) {
+                                <button type="button" (mousedown)="selectEmployee2(emp)"
+                                    class="list-group-item list-group-item-action d-flex justify-content-between">
+                                    <span>{{ emp.employeeName }}</span>
+                                    <span class="text-muted small">ID: {{ emp.employeeCode }}</span>
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="col-md-3">
+                    <label class="fw-bold small text-primary small fw-bold text-uppercase mb-3 mt-1">LPU SPOC UID <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control bg-light" formControlName="lpuSpocUid" readonly
+                        placeholder="Auto-filled" [class.is-invalid]="isInvalid('lpuSpocUid')">
+                    <div class="invalid-feedback">LPU SPOC UID is required.</div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="fw-bold small text-primary small fw-bold text-uppercase mb-3 mt-1">LPU SPOC Email <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" formControlName="lpuSpocEmail"
+                        placeholder="internal-email@lpu.co.in" [class.is-invalid]="isInvalid('lpuSpocEmail')">
+                    <div class="invalid-feedback">Valid LPU SPOC Email is required.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (isRenewalMode) {
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body py-2">
+                <label class="form-label fw-bold small">Upload New MOU Document</label>
+                <input type="file" class="form-control" (change)="onRenewFileSelected($event)"
+                    accept=".pdf,.doc,.docx" />
+                @if (renewalFileName) {
+                    <small class="text-muted">{{renewalFileName}}</small>
+                }
+                @if (renewalFileError) {
+                    <div class="text-danger small">{{renewalFileError}}</div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal-footer justify-content-center border-0 pb-4">
+    <button type="button" class="btn btn-secondary px-4" (click)="activeModal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-dark px-4" (click)="onSubmitModal()">
+        <i class="bi bi-cloud-upload me-1"></i> {{isRenewalMode ? 'Renew MOU' : 'Save Changes'}}
+    </button>
+</div>

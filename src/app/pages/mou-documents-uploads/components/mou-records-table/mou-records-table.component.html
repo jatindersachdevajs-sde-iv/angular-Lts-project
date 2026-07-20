@@ -1,0 +1,240 @@
+<div class="row">
+    @if (isLoading) {
+        <div class="col-12 text-center">
+            <div class="table-loader">
+                <div class="table-loader-spinner"></div>
+                <div class="table-loader-text">Fetching records from server...</div>
+            </div>
+        </div>
+    } @else if (mouDocuments.length > 0) {
+        <div class="col-12 stretch-card">
+            <div class="card border-0 shadow-none">
+                <div class="card-body p-0">
+                    <div class="card-title-container mb-3">
+                        <i class="bi bi-file-earmark-text title-icon"></i>
+                        <h6 class="card-title">MOU Uploads Details</h6>
+                    </div>
+                    
+                    @if (showFilters) {
+                        <div class="filter-container">
+                            @if (exportEnabled) {
+                                <div>
+                                    <button (click)="exportToExcel()" class="btn btn-export">
+                                        <i class="bi bi-file-earmark-excel"></i> Export to Excel
+                                    </button>
+                                </div>
+                            }
+                            <div>
+                                <select class="form-select" [(ngModel)]="statusFilter" (change)="onStatusChange($event)">
+                                    <option value="all">All MOU Statuses</option>
+                                    <option value="active">Active</option>
+                                    <option value="expired">Expired</option>
+                                    <option value="renewed">Renewed</option>
+                                </select>
+                            </div>
+                            <div>
+                                <ng-select class="custom-select-ui" [(ngModel)]="SelectedMouCategory" [multiple]="false" placeholder="Select Category" (change)="applyFilters()">
+                                    <ng-option [value]="'All'">All Categories</ng-option>
+                                    @for (category of allMouCategories; track category.id) {
+                                        <ng-option [value]="category">
+                                            {{ category.CategoryName }}
+                                        </ng-option>
+                                    }
+                                </ng-select>
+                            </div>
+                            <div>
+                                <select class="form-select" [(ngModel)]="selectedSchoolDivision" (change)="onSchoolDivisionChange($event)">
+                                    <option value="0">All School / Divisions</option>
+                                    @for (division of allSchoolDivisions; track division.id) {
+                                        <option [value]="division.id">
+                                            {{ division.schoolDivision }}
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                <input [(ngModel)]="searchQuery" (keyup)="applyFilters()" id="search" type="text"
+                                    class="form-control" placeholder="Search..." aria-label="Search" />
+                            </div>
+                        </div>
+
+                        @if (statusFilter !== 'all') {
+                            <div class="row p-3 mx-4 mb-3 bg-light rounded">
+                                <div class="col-12">
+                                    <div class="d-flex gap-3 align-items-center flex-wrap">
+                                        <span class="fw-bold me-2">Summary:</span>
+                                        <span class="badge bg-success" [class.bg-primary]="statusFilter === 'active'">
+                                            Active: {{ getActiveCount() }}
+                                        </span>
+                                        <span class="badge bg-danger" [class.bg-primary]="statusFilter === 'expired'">
+                                            Expired: {{ getExpiredCount() }}
+                                        </span>
+                                        <span class="badge bg-danger" [class.bg-primary]="statusFilter === 'renewed'">
+                                            Renewed: {{ getRenewedCount() }}
+                                        </span>
+                                        @if (searchQuery) {
+                                            <span class="badge bg-dark">
+                                                Filtered: {{ filteredMouDocumentsData.length }}
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+
+                    @if (filteredMouDocumentsData.length > 0) {
+                        <!-- Top horizontal scrollbar helper -->
+                        <div class="double-scroll-top-wrapper" (scroll)="onTopScroll($event)" #scrollTopWrapper>
+                            <div class="double-scroll-top-dummy" [style.width.px]="tableWidth"></div>
+                        </div>
+
+                        <div class="table-responsive-wrapper" style="max-height: 480px; overflow-y: auto;">
+                            <ngx-datatable 
+                                #mouTable
+                                class="bootstrap table-striped material custom-datatable" 
+                                [columnMode]="'force'" 
+                                [scrollbarH]="true"
+                                [rows]="pagedMouDocumentsData" 
+                                [headerHeight]="50"
+                                [footerHeight]="0" 
+                                [rowHeight]="'auto'">
+
+                                <ngx-datatable-column name="New MOU Id" [sortable]="false" [width]="130">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        @if (row.newMouId && row.newMouId.length > 0) {
+                                            <span class="fw-bold">{{ row.newMouId }}</span>
+                                        } @else {
+                                            <span class="text-muted">Not Found</span>
+                                        }
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column name="Mou Category" [sortable]="false" [width]="150">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        @if (row.mouCategory && row.mouCategory.length > 0) {
+                                            <span>{{ row.mouCategory }}</span>
+                                        } @else {
+                                            <span class="text-muted">Not Found</span>
+                                        }
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column name="Old MOU Id" [sortable]="false" [width]="120">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        <span class="text-muted">MOU/{{ row.id }}</span>
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column name="Renewal" [sortable]="false" [width]="100">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        @if (row.mouStatus === 'Expired' && row.renewalCount == null) {
+                                            <button class="btn-icon-action btn-renew" title="Renew MOU" (click)="onRenewClick.emit(row)">
+                                                <i class="bi bi-arrow-repeat"></i>
+                                            </button>
+                                        } @else if (row.renewalCount != null) {
+                                            <button class="btn-icon-action" title="View Renewal History" (click)="onHistoryClick.emit(row)">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        } @else {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column name="Partner Organisation" [sortable]="false" [width]="200">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        <span>{{ row.mouPartnerName }}</span>
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column name="MOU Start Date" [sortable]="false" [width]="120">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        <span>{{ row.mouStartDate | date:'dd/MM/yyyy' }}</span>
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column name="Mou End Date" [sortable]="false" [width]="120">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        <span>{{ row.mouEndDate | date:'dd/MM/yyyy' }}</span>
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column name="View Document" [sortable]="false" [width]="100">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        @if (row.filePath) {
+                                            <a class="btn-icon-action" [href]="row.filePath" target="_blank" title="View PDF">
+                                                <i class="bi bi-file-pdf fs-5 text-danger"></i>
+                                            </a>
+                                        } @else {
+                                            <span class="text-muted">No Doc</span>
+                                        }
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column name="School Involved" [sortable]="false" [width]="180">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        @if (row.schoolDivisionInvolved && row.schoolDivisionInvolved.length > 0) {
+                                            <select class="form-select form-select-sm" style="width: auto; max-width: 160px;">
+                                                <option selected value="0">Check Involved Division</option>
+                                                @for (schoolId of row.schoolDivisionInvolved.split(','); track schoolId) {
+                                                    <option [value]="getDivisionNameById(schoolId)">
+                                                        {{ getDivisionNameById(schoolId) }}
+                                                    </option>
+                                                }
+                                            </select>
+                                        } @else {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column name="SPOC Person Detail" [sortable]="false" [width]="220">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        <span>
+                                            {{ row.spocName != null && row.spocEmailId != null && row.spocContactNo ? 
+                                               row.spocName + ' (' + row.spocEmailId + ')' : 'N/A' }}
+                                        </span>
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column name="MOU Status" [sortable]="false" [width]="120">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                        @if (row.renewalCount == null) {
+                                            <span class="status-pill" [ngClass]="row.mouStatus === 'Active' ? 'active' : 'expired'">
+                                                {{ row.mouStatus?.length > 0 ? row.mouStatus : 'NA' }}
+                                            </span>
+                                        } @else {
+                                            <span class="status-pill active">Renewed</span>
+                                        }
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                            </ngx-datatable>
+                        </div>
+
+                        <div class="row d-flex justify-content-between mt-4 align-items-center">
+                            <div class="col-sm-6 text-start">
+                                <mat-paginator [length]="filteredMouDocumentsData.length"
+                                    [pageSize]="recordsPerPage" [pageSizeOptions]="[5, 10, 25, 50]"
+                                    (page)="onPageChange($event)">
+                                </mat-paginator>
+                            </div>
+                            <div class="col-sm-6 text-end fw-bold">
+                                Total Records: {{ filteredMouDocumentsData.length }}
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="col-12 text-center py-5">
+                            <label class="fs-4 text-muted">No Record(s) found.</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    } @else {
+        <div class="col-12 text-center py-5">
+            <label class="fs-4 text-muted">No Record(s) are Available.</label>
+        </div>
+    }
+</div>

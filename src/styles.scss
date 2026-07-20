@@ -1,0 +1,83 @@
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$magenta-palette,
+        tertiary: mat.$violet-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+body {
+  // Default the application to a light color theme. This can be changed to
+  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // user's system settings.
+  color-scheme: light;
+
+  // Set a default background, font and text colors for the application using
+  // Angular Material's system-level CSS variables. Learn more about these
+  // variables at https://material.angular.dev/guide/system-variables
+  background-color: #f8f9fa;
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  // Reset the user agent margin.
+  margin: 0;
+  height: 100%;
+}
+/* You can add global styles to this file, and also import other style files */
+
+@import "../node_modules/@ng-select/ng-select/themes/default.theme.css";
+@import "../node_modules/@swimlane/ngx-datatable/index.css";
+@import "../node_modules/@swimlane/ngx-datatable/themes/bootstrap.css";
+@import "../node_modules/@swimlane/ngx-datatable/themes/material.css";
+@import "../node_modules/@swimlane/ngx-datatable/assets/icons.css";
+
+.themeClr {
+  color: #FD6C04 !important;
+}
+
+.swal2-confirm {
+  color: white !important;
+}
+
+.datatable-header-cell-label {
+  font-size: 14px !important;
+  font-weight: bold !important;
+}
+
+.custom-datatable ngx-datatable.material .datatable-header .datatable-header-cell {
+  font-size: 15px !important;
+}
+
+/* Custom Scrollbars (Orange thumb and light gray track) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FD6C04;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d85b03;
+}

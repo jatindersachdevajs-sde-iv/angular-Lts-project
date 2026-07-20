@@ -1,0 +1,111 @@
+<ng-container *ngIf="isLoading">
+  <div class="fullscreen-loader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Loading MOU records, please wait...</div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="!isLoading && !isLoginFailed; else loginFailed">
+  <div class="container-fluid" id="adminPage">
+    <div class="row mb-4">
+        <!-- Name / UID Card -->
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="form-label mb-1">Employee Name / UID</span>
+                        <h4 class="text-dark mb-0 mt-1">{{EmployeeName || 'N/A'}} / {{EmployeeCode || 'N/A'}}</h4>
+                    </div>
+                    <div class="bg-light p-3 rounded-circle text-primary">
+                        <i class="bi bi-person-badge fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Department Name Card -->
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="form-label mb-1">Department Name</span>
+                        <h4 class="text-dark mb-0 mt-1">{{DepartmentName || 'N/A'}}</h4>
+                    </div>
+                    <div class="bg-light p-3 rounded-circle text-success">
+                        <i class="bi bi-building-fill fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="mb-4">
+        <ul class="nav nav-tabs d-flex justify-content-center border-0" id="nav-tab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeTab === 'UploadNewMou'" (click)="activeTab = 'UploadNewMou'" style="cursor: pointer;">Upload New MOU</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeTab === 'MyAllUploadNewMou'" (click)="activeTab = 'MyAllUploadNewMou'" style="cursor: pointer;">My MOU(s) Record(s)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeTab === 'AllRenewedMou'" (click)="activeTab = 'AllRenewedMou'; getRenewedCount()" style="cursor: pointer;">Renewed MOU(s) Record(s)</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Tab Contents -->
+    <div class="tab-content" id="nav-tabContent">
+        <!-- Tab 1: Upload Form -->
+        <div class="tab-pane fade" [class.show]="activeTab === 'UploadNewMou'" [class.active]="activeTab === 'UploadNewMou'" id="UploadNewMou" role="tabpanel">
+            <app-mou-upload-form [employeeName]="EmployeeName" [employeeCode]="EmployeeCode"
+                [departmentName]="DepartmentName" [allSchoolDivisions]="allSchoolDivisions"
+                [allMouCategories]="AllMouCategories" (uploadSuccess)="onUploadSuccess()"></app-mou-upload-form>
+        </div>
+
+        <!-- Tab 2: Records Table -->
+        <div class="tab-pane fade" [class.show]="activeTab === 'MyAllUploadNewMou'" [class.active]="activeTab === 'MyAllUploadNewMou'" id="MyAllUploadNewMou" role="tabpanel">
+            <app-mou-records-table [mouDocuments]="MouDocumentsData" [allSchoolDivisions]="allSchoolDivisions"
+                [allMouCategories]="AllMouCategories" [showFilters]="true" [exportEnabled]="true"
+                [isLoading]="isTableLoading" (onRenewClick)="openRenewModal($event)"
+                (onHistoryClick)="OpenAllMouRenewalHistory($event)"></app-mou-records-table>
+        </div>
+
+        <!-- Tab 3: Renewed Records Table -->
+        <div class="tab-pane fade" [class.show]="activeTab === 'AllRenewedMou'" [class.active]="activeTab === 'AllRenewedMou'" id="AllRenewedMou" role="tabpanel">
+            <app-mou-records-table [mouDocuments]="AllRenewedMouDetails" [allSchoolDivisions]="allSchoolDivisions"
+                [allMouCategories]="AllMouCategories" [showFilters]="false" [exportEnabled]="true"
+                [isLoading]="isTableLoading" (onRenewClick)="openRenewModal($event)"
+                (onHistoryClick)="OpenAllMouRenewalHistory($event)"></app-mou-records-table>
+        </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #loginFailed>
+  <ng-container *ngIf="isLoginFailed">
+    <div class="card unauthorized-card text-center">
+      <div class="card-body p-5">
+        <div class="mb-4">
+          <i class="bi bi-shield-lock-fill text-danger" style="font-size: 4rem;"></i>
+        </div>
+        <h3 class="text-danger fs-3 mb-4 fw-bold">Unauthorized Access</h3>
+        <div class="row mt-4 mb-4 d-flex justify-content-center">
+          <div class="col-md-6 mb-3 text-start">
+            <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Why ?</h5>
+            <ul class="list-group">
+              <li class="list-group-item">You are trying to access a page that is not available for you.</li>
+              <li class="list-group-item">Your current session has expired.</li>
+            </ul>
+          </div>
+          <div class="col-md-6 mb-3 text-start">
+            <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Try Following step(s):</h5>
+            <ul class="list-group">
+              <li class="list-group-item">Logout from your current session.</li>
+              <li class="list-group-item">Try logging in again.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</ng-template>

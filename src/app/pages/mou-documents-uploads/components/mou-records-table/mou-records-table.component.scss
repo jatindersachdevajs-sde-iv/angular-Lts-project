@@ -1,0 +1,350 @@
+// Premium professional styles for MOU records table
+
+:host {
+  display: block;
+}
+
+// Table Wrapper Card
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.card-title-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 1.75rem 0.5rem;
+  
+  .card-title {
+    color: #1e293b;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 0;
+  }
+  
+  .title-icon {
+    font-size: 1.5rem;
+    color: #FD6C04;
+  }
+}
+
+// Filter Section
+.filter-container {
+  background-color: #f8fafc;
+  padding: 1.25rem 1.75rem;
+  border-radius: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-control, .form-select {
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1e293b;
+  transition: all 0.2s ease;
+
+  &:focus {
+    border-color: #FD6C04;
+    box-shadow: 0 0 0 4px rgba(253, 108, 4, 0.12);
+    outline: none;
+  }
+}
+
+// ng-select custom styling
+::ng-deep .ng-select {
+  &.custom-select-ui {
+    .ng-select-container {
+      border-radius: 10px !important;
+      border: 1px solid #cbd5e1 !important;
+      min-height: 40px !important;
+      
+      &:hover {
+        border-color: #cbd5e1 !important;
+      }
+    }
+    
+    &.ng-select-opened .ng-select-container {
+      border-color: #FD6C04 !important;
+      box-shadow: 0 0 0 4px rgba(253, 108, 4, 0.12) !important;
+    }
+
+    .ng-placeholder {
+      font-size: 0.9rem !important;
+      color: #94a3b8 !important;
+    }
+  }
+}
+
+// Export Button
+.btn-export {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.55rem 1.25rem;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 40px;
+  width: 100%;
+
+  &:hover {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Table / Summary Styling
+.summary-container {
+  padding: 0.85rem 1.5rem;
+  background-color: #f1f5f9;
+  border-radius: 10px;
+  margin: 0 1.75rem 1.5rem;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+// Status Badges
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.75px;
+
+  &.active {
+    background-color: rgba(34, 197, 94, 0.12);
+    color: #15803d;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+  }
+
+  &.expired {
+    background-color: rgba(239, 68, 68, 0.12);
+    color: #b91c1c;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+}
+
+// Action Buttons
+.btn-icon-action {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #475569;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #FD6C04;
+    color: #ffffff;
+    border-color: #FD6C04;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(253, 108, 4, 0.2);
+  }
+
+  &.btn-renew {
+    background-color: rgba(253, 108, 4, 0.08);
+    color: #FD6C04;
+    border-color: rgba(253, 108, 4, 0.15);
+
+    &:hover {
+      background-color: #FD6C04;
+      color: #ffffff;
+      border-color: #FD6C04;
+    }
+  }
+}
+
+// Scrollbars wrapper & table-responsive updates
+.double-scroll-top-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 12px;
+  background: transparent;
+  
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 3px;
+  }
+}
+
+.double-scroll-top-dummy {
+  height: 1px;
+}
+
+.table-responsive-wrapper {
+  width: 100% !important;
+  display: block;
+  overflow-y: auto;
+  margin: 0 1.75rem;
+  width: calc(100% - 3.5rem) !important;
+  border-radius: 12px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 3px;
+  }
+}
+
+.custom-datatable {
+  box-shadow: none !important;
+  border: none !important;
+
+  .datatable-header {
+    background-color: #f8fafc !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+
+    .datatable-header-cell {
+      padding: 1rem 0.75rem !important;
+      color: #475569 !important;
+      
+      .datatable-header-cell-template-wrap {
+        font-weight: 700 !important;
+      }
+    }
+  }
+
+  .datatable-body {
+    .datatable-body-row {
+      border-bottom: 1px solid #f1f5f9 !important;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: rgba(253, 108, 4, 0.02) !important;
+      }
+
+      .datatable-body-cell {
+        padding: 0.95rem 0.75rem !important;
+        font-size: 0.9rem !important;
+        display: flex;
+        align-items: center;
+        color: #334155;
+      }
+    }
+  }
+}
+
+// Pagination Area
+.paginator-container {
+  padding: 1rem 1.75rem;
+  border-top: 1px solid #f1f5f9;
+  background-color: #ffffff;
+}
+
+::ng-deep {
+  .mat-mdc-paginator,
+  .mat-paginator {
+    background-color: #ffffff !important;
+    color: #475569 !important;
+  }
+
+  .mat-mdc-select-value,
+  .mat-select-value {
+    color: #475569 !important;
+  }
+
+  .mat-mdc-form-field {
+    --mdc-filled-text-field-container-color: #ffffff !important;
+    --mdc-text-field-hover-line-color: #FD6C04 !important;
+  }
+
+  .mat-mdc-form-field-focus-active .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-line-ripple {
+    background-color: #FD6C04 !important;
+  }
+
+  .mat-mdc-select-arrow {
+    color: #FD6C04 !important;
+  }
+
+  .mat-mdc-option:focus:not(.mat-mdc-option-disabled),
+  .mat-mdc-option.mat-mdc-option-active,
+  .mat-mdc-option.mdc-list-item--selected:not(.mat-mdc-option-disabled) {
+    background-color: rgba(253, 108, 4, 0.08) !important;
+  }
+}
+
+// Custom Loader
+.table-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 0;
+
+  .table-loader-spinner {
+    width: 44px;
+    height: 44px;
+    border: 3px dashed #FD6C04;
+    border-radius: 50%;
+    animation: spin 1.2s linear infinite;
+  }
+
+  .table-loader-text {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #475569;
+    letter-spacing: 0.5px;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}

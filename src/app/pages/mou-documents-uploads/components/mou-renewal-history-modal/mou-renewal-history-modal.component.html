@@ -1,0 +1,119 @@
+<div class="modal-header bg-success text-white">
+    <h5 class="modal-title">Renewed MOU - {{ mouId }} - Details</h5>
+    <button type="button" class="btn-close btn-close-white" (click)="activeModal.dismiss()"></button>
+</div>
+
+<div class="container-fluid py-4 bg-light">
+    <div class="table-responsive w-100">
+        <ngx-datatable class="bootstrap table-responsive table-striped material" [columnMode]="'force'" [scrollbarH]="true"
+            [rows]="renewedMouDocumentDetails" [loadingIndicator]="loadingIndicator" [headerHeight]="50"
+            [footerHeight]="50" [rowHeight]="'auto'" [limit]="10">
+
+            <ngx-datatable-column name="New MOU Id" [sortable]="false" prop="Id">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    <span style="padding: 10px; display: inline-block;">{{ newMouid }}</span>
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Old MOU Id" [sortable]="false" prop="Id">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    @if (row.id != null) {
+                        <span style="padding: 10px; display: inline-block;">MOU/{{ row.id }}</span>
+                    }
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="MOU Organisation" [sortable]="false" prop="Id">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    @if (row.mouPartnerName != null) {
+                        <span style="padding: 10px; display: inline-block;">{{ row.mouPartnerName }}</span>
+                    }
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="MOU StartDate" [sortable]="false" prop="Id">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    @if (row.mouStartDate != null) {
+                        <span style="padding: 10px; display: inline-block;">{{ row.mouStartDate }}</span>
+                    } @else {
+                        <span style="padding: 10px; display: inline-block; color: brown;">NA</span>
+                    }
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="MOU EndDate" [sortable]="false" prop="Id">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    @if (row.mouEndDate != null) {
+                        <span style="padding: 10px; display: inline-block;">{{ row.mouEndDate }}</span>
+                    } @else {
+                        @if (row.mouEndDate == null && row.mouStartDate != null) {
+                            <span style="padding: 10px; display: inline-block; color: brown;">Indefinite</span>
+                        }
+                        @if (row.mouEndDate == null && row.mouStartDate == null) {
+                            <span style="padding: 10px; display: inline-block; color: brown;">NA</span>
+                        }
+                    }
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="MOU Status" [sortable]="false" prop="Id">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    @if (row.mouStatus != null) {
+                        <span style="padding: 10px; display: inline-block;">{{ row.mouStatus }}</span>
+                    } @else {
+                        @if (row.mouEndDate != null && row.mouStartDate != null) {
+                            <span style="padding: 10px; display: inline-block; color: brown;">{{ row.mouStatus }}</span>
+                        }
+                        @if (row.mouEndDate == null && row.mouStartDate == null) {
+                            <span style="padding: 10px; display: inline-block; color: brown;">NA</span>
+                        }
+                    }
+                </ng-template>
+            </ngx-datatable-column>
+
+            @for (col of columns; track col) {
+                <ngx-datatable-column [prop]="col"></ngx-datatable-column>
+            }
+
+            <ngx-datatable-column name="New Renewed MOU" [sortable]="false" prop="Id">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    @if (row.filePath) {
+                        <button class="btn btn-secondary ms-3 btn-sm" (click)="onDownloadFile(row.newRenewalFile)" [disabled]="row.filePath < 1">
+                            <i class="bi bi-download"></i>
+                        </button>
+                    } @else {
+                        <span style="padding: 10px; display: inline-block;">No Doc Uploaded</span>
+                    }
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="MOU Document" [sortable]="false" prop="Id">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    @if (row.filePath) {
+                        <button class="btn btn-secondary ms-3 btn-sm" (click)="onDownloadFile(row.filePath)" [disabled]="row.filePath < 1">
+                            <i class="bi bi-download"></i>
+                        </button>
+                    } @else {
+                        <span style="padding: 10px; display: inline-block;">No Doc Uploaded</span>
+                    }
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Division Involved" [sortable]="false" prop="Id">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                    @if (row.schoolDivisionInvolved && row.schoolDivisionInvolved.length > 0) {
+                        @for (schoolId of row.schoolDivisionInvolved.split(','); track schoolId) {
+                            <ul style="list-style: none; padding: 0; margin: 0; display: inline;">
+                                <li style="display: inline; font-weight: 500;">{{ getDivisionNameById(schoolId) }}, </li>
+                            </ul>
+                        }
+                    }
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+    </div>
+</div>
+
+<div class="modal-footer justify-content-center border-0 pb-4">
+    <button type="button" class="btn btn-secondary px-4" (click)="activeModal.dismiss()">Close</button>
+</div>

@@ -1,0 +1,82 @@
+If you want to change the Git username, email, and connect your local project to a different Git repository, follow these steps.
+
+1. Change the Git username
+
+For all repositories (global):
+
+git config --global user.name "jatinder kumar"
+git config --global user.email "jatinder.sachdeva.js@gmail.com"
+
+git remote -v
+git remote remove origin
+git remote -v 
+git remote set-url origin  https://github.com/jatindersachdevajs-sde-iv/angular-Lts-project.git
+git remote add origin https://github.com/jatindersachdevajs-sde-iv/angular-Lts-project.git
+
+
+Or only for the current repository:
+
+git config user.name "Your New Name"
+2. Change the Git email
+
+For all repositories (global):
+
+
+
+Or only for the current repository:
+
+git config user.email "your.email@example.com"
+
+Verify:
+
+git config user.name
+git config user.email
+
+Or check global values:
+
+git config --global user.name
+git config --global user.email
+3. Change the GitHub repository (remote)
+
+Check the current remote:
+
+Option A: Replace the existing remote (recommended)
+git remote set-url origin https://github.com/USERNAME/NEW_REPOSITORY.git
+
+
+
+
+Verify:
+
+git remote -v
+Option B: Remove the old remote and add a new one
+git remote remove origin
+git remote add origin https://github.com/USERNAME/NEW_REPOSITORY.git
+
+Verify:
+
+git remote -v
+4. Push your code to the new repository
+
+If it's the first push:
+
+git push -u origin main
+
+or, if your default branch is master:
+
+git push -u origin master
+
+Check your current branch:
+
+git branch --show-current
+Example
+git config --global user.name "Jatinder Kumar"
+git config --global user.email "jatinder@example.com"
+
+git remote set-url origin https://github.com/JatinderKumar/MyAngularProject.git
+
+git remote -v
+
+git push -u origin main
+
+If you're changing to a different GitHub account, you may also need to update your authentication credentials (PAT or SSH key), otherwise Git may still try to push using the old account.

@@ -1,0 +1,245 @@
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+        <div class="container-fluid">
+            <form #myForm="ngForm" (ngSubmit)="UploadDocument()">
+
+                <!-- Category Row -->
+                <div class="row align-items-center mb-4 mt-2">
+                    <div class="col-md-3">
+                        <label class="form-label mb-md-0">Select Mou Category <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ng-select [(ngModel)]="SelectedMouCategory" name="SelectedMouCategory" [multiple]="false" placeholder="Select Category" (change)="changeCategory($event)" [disabled]="isSubmitting">
+                                    @for (category of allMouCategories; track category.id) {
+                                        <ng-option [value]="category">
+                                            {{ category.CategoryName }}
+                                        </ng-option>
+                                    }
+                                </ng-select>
+                                @if (hasCategoryError) {
+                                    <div class="themeClr mt-1 small"><i class="bi bi-exclamation-circle-fill me-1"></i>Mou Category is Required</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Partner & SPOC Row -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label mb-md-0">MOU Partner Organisation Name <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <input type="text" class="form-control text-dark" name="MouPartner"
+                            autocomplete="off" placeholder="Provide MOU Partner Name" required ngModel #mouPartner="ngModel"
+                            [(ngModel)]="MouPartner" [disabled]="isSubmitting" />
+                        @if (mouPartner.invalid && mouPartner.touched) {
+                            <div class="themeClr mt-1 small">
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>MOU Partner Name is required.
+                            </div>
+                        }
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label mb-md-0">SPOC Person Name <span class="text-secondary">(MOU Partner)</span> <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="SOPCName"
+                            autocomplete="off" placeholder="Provide SOPC Name" required ngModel
+                            [(ngModel)]="SOPCName" #sopcName="ngModel" [disabled]="isSubmitting" />
+                        @if (sopcName.invalid && sopcName.touched) {
+                            <div class="themeClr mt-1 small">
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>SPOC Person Name is required.
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Start Date & End Date Row -->
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label mb-md-0">MOU Start Date <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <input type="date" class="form-control text-dark" name="MouStartDate"
+                            autocomplete="off" required [(ngModel)]="MouStartDate"
+                            (change)="updateMouStatus()" [disabled]="isSubmitting" />
+                        @if (!MouStartDate) {
+                            <div class="themeClr mt-1 small">
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>MOU Start Date is required.
+                            </div>
+                        }
+                    </div>
+
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="d-flex flex-column">
+                            <label class="form-label mb-2">MOU End Date</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <input type="date" class="form-control" [disabled]="isIndefiniteMou || isSubmitting"
+                                    name="MouEndDate" autocomplete="off" placeholder="Provide Mou End Date"
+                                    [(ngModel)]="MouEndDate" (change)="updateMouStatus()" style="max-width: 180px;" />
+                                <div class="d-flex align-items-center gap-1.5">
+                                    <input type="checkbox" id="IndefiniteMou" name="isIndefiniteMou" [(ngModel)]="isIndefiniteMou"
+                                        (change)="toggleEndDate()" [disabled]="isSubmitting" />
+                                    <label for="IndefiniteMou" class="mb-0 text-secondary" style="font-size: 0.85rem; font-weight: 500; cursor: pointer;">Indefinite MOU</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 text-md-end">
+                        <div class="mou-status-badge d-inline-flex" [class.status-active]="moustatus === 'Active'" [class.status-expired]="moustatus !== 'Active'">
+                            <i class="bi" [class.bi-check-circle-fill]="moustatus === 'Active'" [class.bi-exclamation-triangle-fill]="moustatus !== 'Active'"></i>
+                            <span>{{ moustatus }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email & Contact Number Row -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label mb-md-0">SPOC Person Email Id <span class="text-secondary">(MOU Partner)</span> <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <input type="email" class="form-control" name="SOPCEmail"
+                            autocomplete="off" placeholder="Provide SOPC Email Id" required
+                            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" ngModel
+                            [(ngModel)]="SOPCEmail" #sopcEmail="ngModel" [disabled]="isSubmitting" />
+                        @if (sopcEmail.invalid && sopcEmail.touched) {
+                            <div class="themeClr mt-1 small">
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>
+                                @if (sopcEmail.errors?.['required']) {
+                                    <span>SOPC Email Id is required.</span>
+                                }
+                                @if (sopcEmail.errors?.['pattern']) {
+                                    <span>Invalid Email formatting.</span>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label mb-md-0">SPOC Person Phone <span class="text-secondary">(MOU Partner)</span> <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control"
+                            name="SOPCNumber" autocomplete="off" placeholder="Provide SOPC Phone Number"
+                            required ngModel [(ngModel)]="SOPCNumber" #sopcNumber="ngModel" [disabled]="isSubmitting" />
+                        @if (sopcNumber.invalid && sopcNumber.touched) {
+                            <div class="themeClr mt-1 small">
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>SPOC Phone Number is required.
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- LPU SPOC Name & Email Row -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label mb-md-0">MOU SPOC Name [LPU] <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0 position-relative">
+                        <input type="text" id="responsiblePerson" name="responsiblePerson" required
+                            class="form-control" [(ngModel)]="ResponsiblePerson"
+                            [formControl]="employeeControl" placeholder="Search by name or code"
+                            (input)="onInput()" (keydown)="onKeydown($event)" (change)="checkUIDValidity()"
+                            (focus)="showSuggestions = true" (blur)="hideSuggestions()" [disabled]="isSubmitting" />
+                        @if (employeeControl.invalid && employeeControl.touched) {
+                            <div class="themeClr mt-1 small">
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>LPU SPOC Name is required.
+                            </div>
+                        }
+
+                        @if (showSuggestions && filteredEmployeesData.length) {
+                            <div class="list-group position-absolute w-100 shadow-lg z-3">
+                                @for (employee of filteredEmployeesData; track employee.employeeCode; let i = $index) {
+                                    <button type="button" class="list-group-item list-group-item-action"
+                                        [class.active]="i === activeSuggestionIndex"
+                                        (mousedown)="selectEmployee(employee)">
+                                        {{ employee.employeeName }} ({{ employee.employeeCode }})
+                                    </button>
+                                }
+                            </div>
+                        }
+                        @if (AssignedToUid) {
+                            <div class="text-success mt-2 small">
+                                <i class="bi bi-check-circle-fill me-1"></i>UID: <strong>{{ AssignedToUid }} {{AssignedToUidName}}</strong>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label mb-md-0">MOU SPOC EmailId [LPU] <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="email" class="form-control"
+                            name="LPUSpocEmail" id="LPUSpocEmail" autocomplete="off"
+                            placeholder="Provide LPU SPOC Email" required
+                            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" ngModel
+                            [(ngModel)]="LPUSpocEmail" #lpusopcEmail="ngModel" [disabled]="isSubmitting" />
+                        @if (lpusopcEmail.invalid && lpusopcEmail.touched) {
+                            <div class="themeClr mt-1 small">
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>
+                                @if (lpusopcEmail.errors?.['required']) {
+                                    <span>LPU SPOC Email is required.</span>
+                                }
+                                @if (lpusopcEmail.errors?.['pattern']) {
+                                    <span>Invalid Email formatting.</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Division Involved & Upload Document Row -->
+                <div class="row align-items-start mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label mb-md-0">School/Division Involved <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <ng-select [items]="allSchoolDivisions" name="selectedSchoolDivisions" [multiple]="true"
+                            bindLabel="schoolDivision" [clearable]="true" [virtualScroll]="true"
+                            placeholder="Select Divisions" (change)="changeResponsiblePlanned($event)" bindValue="id"
+                            [hideSelected]="true" [(ngModel)]="selectedSchoolDivisions" [disabled]="isSubmitting">
+                        </ng-select>
+                        @if (hasSelectionError) {
+                            <div class="themeClr mt-1 small"><i class="bi bi-exclamation-circle-fill me-1"></i>One school division is Required</div>
+                        }
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label mb-md-0">Upload Document <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="file-upload-wrapper">
+                            <i class="bi bi-cloud-arrow-up-fill upload-icon"></i>
+                            <div class="upload-text">{{ fileName || 'Choose file or drag here' }}</div>
+                            <div class="upload-hint">PDF, DOC, DOCX allowed (Max 3MB)</div>
+                            <input required type="file" id="File" name="File"
+                                (change)="onFileSelected($event)" accept=".pdf, .doc, .docx" [disabled]="isSubmitting" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button Row -->
+                <div class="row mt-5">
+                    <div class="col-12 text-center">
+                        <button type="submit" [disabled]="!myForm.valid || isSubmitting"
+                            class="btn btn-primary px-5">
+                            @if (isSubmitting) {
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                <span>Saving Record...</span>
+                            } @else {
+                                <i class="bi bi-file-earmark-check-fill"></i>
+                                <span>Save Record</span>
+                            }
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

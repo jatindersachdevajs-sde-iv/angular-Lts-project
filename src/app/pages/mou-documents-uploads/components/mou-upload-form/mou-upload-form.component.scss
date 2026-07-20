@@ -1,0 +1,243 @@
+// Premium styling for MOU Upload Form component
+
+:host {
+  display: block;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  padding: 1rem;
+}
+
+// Form Labels
+.form-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+
+  br {
+    display: none; // Keep label on single line if possible or clean break
+  }
+}
+
+// Form Inputs and Selects
+.form-control, .form-select {
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  color: #1e293b !important;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.625rem 1rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100% !important;
+
+  &::placeholder {
+    color: #94a3b8;
+  }
+
+  &:focus {
+    background-color: #ffffff;
+    border-color: #FD6C04;
+    box-shadow: 0 0 0 4px rgba(253, 108, 4, 0.12);
+    outline: none;
+  }
+
+  &:disabled {
+    background-color: #e2e8f0;
+    color: #64748b !important;
+    cursor: not-allowed;
+  }
+}
+
+// Custom ng-select configuration
+::ng-deep .ng-select {
+  .ng-select-container {
+    background-color: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+    min-height: 44px !important;
+    padding: 0 0.5rem;
+    transition: all 0.2s ease !important;
+
+    &:hover {
+      border-color: #cbd5e1 !important;
+    }
+  }
+
+  &.ng-select-opened .ng-select-container {
+    background-color: #ffffff !important;
+    border-color: #FD6C04 !important;
+    box-shadow: 0 0 0 4px rgba(253, 108, 4, 0.12) !important;
+  }
+  
+  .ng-placeholder {
+    color: #94a3b8 !important;
+    font-size: 0.95rem;
+  }
+
+  .ng-value {
+    color: #1e293b !important;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+}
+
+// Custom Suggestion List Box
+.list-group {
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  overflow: hidden;
+  margin-top: 4px;
+  max-height: 250px;
+  overflow-y: auto;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  .list-group-item {
+    font-size: 0.9rem;
+    color: #334155;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover, &.active {
+      background-color: rgba(253, 108, 4, 0.08) !important;
+      color: #FD6C04 !important;
+      font-weight: 600;
+    }
+  }
+}
+
+// Status Display Badge
+.mou-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  &.status-active {
+    background-color: rgba(34, 197, 94, 0.12);
+    color: #15803d;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+  }
+
+  &.status-expired {
+    background-color: rgba(239, 68, 68, 0.12);
+    color: #b91c1c;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+}
+
+// Custom File Upload Styling
+.file-upload-wrapper {
+  position: relative;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 1.5rem;
+  background-color: #f8fafc;
+  text-align: center;
+  transition: all 0.25s ease;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #FD6C04;
+    background-color: rgba(253, 108, 4, 0.02);
+    
+    .upload-icon {
+      color: #FD6C04;
+      transform: translateY(-2px);
+    }
+  }
+
+  input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .upload-icon {
+    font-size: 2.2rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease;
+    display: inline-block;
+  }
+
+  .upload-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.25rem;
+  }
+
+  .upload-hint {
+    font-size: 0.78rem;
+    color: #64748b;
+  }
+}
+
+// Custom Checkbox
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #FD6C04;
+  border-radius: 4px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+// Submitting state indicator
+.btn-primary {
+  background: linear-gradient(135deg, #FD6C04 0%, #ff8c37 100%);
+  border: none;
+  border-radius: 10px;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(253, 108, 4, 0.2), 0 2px 4px -1px rgba(253, 108, 4, 0.1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #e85f00 0%, #f6771b 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(253, 108, 4, 0.3), 0 4px 6px -2px rgba(253, 108, 4, 0.15);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: #cbd5e1;
+    color: #94a3b8;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+}
