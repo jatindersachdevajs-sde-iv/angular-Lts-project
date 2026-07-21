@@ -69,14 +69,11 @@ git push -u origin master
 Check your current branch:
 
 git branch --show-current
-Example
-git config --global user.name "Jatinder Kumar"
-git config --global user.email "jatinder@example.com"
+ ===================
 
-git remote set-url origin https://github.com/JatinderKumar/MyAngularProject.git
 
-git remote -v
-
+ git remote add origin https://github.com/jatindersachdevajs-sde-iv/angular-Lts-project.git
+git add .
+git commit -m "Initial Angular 21 project"
+git branch -M main
 git push -u origin main
-
-If you're changing to a different GitHub account, you may also need to update your authentication credentials (PAT or SSH key), otherwise Git may still try to push using the old account.

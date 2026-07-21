@@ -164,8 +164,8 @@ export class LpuPlannerServiceService {
         'Authorization': `Bearer ${authToken}`
       })
     };
-    return this.http.get<any>('https://localhost:7125/api/Planning/GetPlannerSessionWithType?Type=P', httpOptions);
-    // return this.http.get<any>(AUTH_API + 'api/Planning/GetPlannerSessionWithType?Type=' + Type, httpOptions);
+    // return this.http.get<any>('https://localhost:7125/api/Planning/GetPlannerSessionWithType?Type=P', httpOptions);
+    return this.http.get<any>(AUTH_API + 'api/Planning/GetPlannerSessionWithType?Type=' + Type, httpOptions);
   }
 
 
