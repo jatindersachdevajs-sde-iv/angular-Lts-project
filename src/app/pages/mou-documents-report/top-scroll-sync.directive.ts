@@ -59,7 +59,7 @@ export class TopScrollSyncDirective implements AfterViewInit, OnDestroy {
     this.scrollTarget.scrollLeft = this.topBar.scrollLeft;
   };
 
-  constructor(private host: ElementRef<HTMLElement>, private renderer: Renderer2) {}
+  constructor(private host: ElementRef<HTMLElement>, private renderer: Renderer2) { }
 
   ngAfterViewInit(): void {
     this.locateScrollTarget();

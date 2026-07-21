@@ -524,24 +524,72 @@
   to { opacity: 1; }
 }
 
-// Scroll sync top scrollbar container styles
+// Compact search input styling
+.search-box-col {
+  max-width: 320px;
+}
+
+.compact-search-input {
+  max-width: 320px;
+  border-radius: 8px;
+}
+
+// Scroll sync top scrollbar container styles with orange theme
 ::ng-deep .top-scroll-sync-bar {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  height: 12px;
-  background: transparent;
+  height: 10px;
+  background: #f8fafc;
   margin-bottom: 0.5rem;
+  border-radius: 4px;
+  scrollbar-color: #FD6C04 #e2e8f0;
+  scrollbar-width: thin;
   
   &::-webkit-scrollbar {
-    height: 6px;
+    height: 8px;
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 4px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 3px;
+    background-color: #FD6C04 !important;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: #e05d00 !important;
+    }
   }
 }
 
 ::ng-deep .top-scroll-sync-spacer {
   height: 1px;
+}
+
+// Custom orange scrollbar for data tables and grid wrappers
+::ng-deep .grid-scroll-wrapper,
+::ng-deep .grid-scroll-wrapper--native-scroll,
+::ng-deep .ngx-datatable .datatable-body,
+::ng-deep .table-responsive {
+  scrollbar-color: #FD6C04 #e2e8f0;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #FD6C04 !important;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: #e05d00 !important;
+    }
+  }
 }

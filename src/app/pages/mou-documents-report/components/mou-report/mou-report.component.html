@@ -112,10 +112,10 @@
                     </option>
                   </select>
                 </div>
-                <div class="col-12 mt-3">
+                <div class="col-md-3 col-lg-3 mt-3 search-box-col">
                   <label class="filter-label">Search</label>
                   <input [(ngModel)]="searchQuery" (keyup)="search()" id="search" type="text"
-                    class="form-control" placeholder="Search Your Text Here" aria-label="Search"
+                    class="form-control compact-search-input" placeholder="Search Your Text Here" aria-label="Search"
                     aria-describedby="basic-addon1" />
                 </div>
               </div>
@@ -135,7 +135,7 @@
               </div>
 
               <div class="grid-scroll-wrapper">
-                <div class="grid-scroll-content" appTopScrollSync=".datatable-body">
+                <div class="grid-scroll-content " appTopScrollSync=".datatable-body">
                   <ngx-datatable class="bootstrap material" [rows]="filteredMouDocumentDetails"
                     [loadingIndicator]="loadingIndicator" [columnMode]="ColumnMode.standard"
                     [footerHeight]="50" [limit]="15" [headerHeight]="50" [rowHeight]="'auto'"
@@ -240,14 +240,16 @@
                     </ngx-datatable-column>
                     <ngx-datatable-column name="Actions" [width]="180" [sortable]="false" prop="Id">
                       <ng-template let-row="row" ngx-datatable-cell-template>
-                        <span class="text-danger fw-bold" *ngIf="row.isApproved===false || row.isApproved===true; else Allows">Action Applied</span>
+                        <span class="text-danger fw-bold" *ngIf="row.isApproved === true || row.isApproved === false || row.isApproved == 1 || row.isApproved == 0 || row.isApproved == 'True' || row.isApproved == 'False'; else Allows">Action Applied</span>
                         <ng-template #Allows>
-                          <button class="btn btn-success me-2" (click)="ChangeApproveStatus(row.id)">
-                            <i class="mdi mdi-check"></i>
-                          </button>
-                          <button class="btn btn-danger" (click)="DisapproveStatus(row.id)">
-                            <i class="mdi mdi-window-close"></i>
-                          </button>
+                          <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-success p-2 d-inline-flex align-items-center justify-content-center shadow-sm" (click)="ChangeApproveStatus(row.id)" title="Approve">
+                              <i class="bi bi-check-lg fs-5"></i>
+                            </button>
+                            <button class="btn btn-danger p-2 d-inline-flex align-items-center justify-content-center shadow-sm" (click)="DisapproveStatus(row.id)" title="Disapprove">
+                              <i class="bi bi-x-lg fs-5"></i>
+                            </button>
+                          </div>
                         </ng-template>
                       </ng-template>
                     </ngx-datatable-column>
@@ -274,10 +276,10 @@
                       <i class="bi bi-download me-1"></i> Export to Excel
                     </button>
                   </div>
-                  <div class="col-sm-8">
+                  <div class="col-md-3 col-lg-3 search-box-col">
                     <label class="filter-label">Search</label>
                     <input type="text" [(ngModel)]="filterText" (ngModelChange)="filterData()"
-                      placeholder="Search by any Field Text" class="form-control" />
+                      placeholder="Search by any Field Text" class="form-control compact-search-input" />
                   </div>
                 </div>
                 <div class="grid-scroll-wrapper grid-scroll-wrapper--native-scroll"
