@@ -1,0 +1,31 @@
+import { MouActivity } from './mou-activity.model';
+
+export const mouActivities: MouActivity[] = [
+    { Id: 1, Description: "Research assistance for Capstone projects/Dissertation/Ph.D. students Supervision and Mentoring (National and International Level)" },
+    { Id: 2, Description: "Empanelment in Board of Studies (School level) / Curriculum Development Committees" },
+    { Id: 3, Description: "Resource person in Joint Seminars / Conferences as key note speaker, Tech committee member etc." },
+    { Id: 4, Description: "Partners involvement in the Adjunct Faculty / Teaching full or specific modules or units in some courses" },
+    { Id: 5, Description: "Involvement in the Student project topic and scope approvals" },
+    { Id: 6, Description: "Involvement in Student Project supervision and mentoring" },
+    { Id: 7, Description: "Involvement in Student Project evaluations" },
+    { Id: 8, Description: "Delivery of Value-added courses (beyond curriculum)/Foreign language" },
+    { Id: 9, Description: "Conduction of Extension and outreach programmes with MOU partners" },
+    { Id: 10, Description: "Student placements" },
+    { Id: 11, Description: "Community outreach training / Development Programs" },
+    { Id: 12, Description: "Joint hosting of Competitions / events or sponsorships for events" },
+    { Id: 13, Description: "Joint projects / IPR etc. / Joint applications to funding agencies" },
+    { Id: 14, Description: "Conduct of Guest Lectures/ Workshops" },
+    { Id: 15, Description: "Utilization of Testing facilities of University by MOU partner organization" },
+    { Id: 16, Description: "MOU partner involvement in the establishment of Centre of Excellence (COE)" },
+    { Id: 17, Description: "MOU partner role under Professional Body Membership" },
+    { Id: 18, Description: "Establishment of Student Chapter" },
+    { Id: 19, Description: "Empanelment in Academia - Industry Interface Council (at university level)" },
+    { Id: 20, Description: "Empanelment in Executive Board (at university level)" },
+    { Id: 21, Description: "Live projects / field projects / research projects / case studies" },
+    { Id: 22, Description: "Student Trainings / Internships" },
+    { Id: 23, Description: "Industry Visits/Tour for Faculty / technical staff/students" },
+    { Id: 24, Description: "MOU partner role in Consultancy projects" },
+    { Id: 25, Description: "Corporate Training - Short duration as well as long duration - MDPs" },
+    { Id: 26, Description: "Support in entrepreneurship" },
+    { Id: 27, Description: "Continuing education: Enrolment of company employees into LPU programmes / Higher education for employees" }
+];

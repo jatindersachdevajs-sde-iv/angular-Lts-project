@@ -1,0 +1,74 @@
+<div class="dropdown p-3 mt-2 ">
+
+    <button class="btn btn-light dropdown-toggle shadow-sm" type="button" data-bs-toggle="dropdown">
+        <i class="bi bi-list"></i> MOU Menu
+
+    </button>
+
+    <ul class="dropdown-menu dropdown-menu-end shadow">
+
+        <li *ngFor="let menu of menus">
+
+            <a *ngIf="menu.visible" class="dropdown-item" (click)="navigate(menu)">
+
+                <i [class]="menu.icon + ' m-2'"></i>
+
+                {{menu.title}}
+
+            </a>
+
+        </li>
+
+    </ul>
+
+</div>
+<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+
+    <div class="container-fluid">
+
+        <a class="navbar-brand fw-bold">
+            MOU Portal
+        </a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mouNavbar">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div
+            class="collapse navbar-collapse"
+            id="mouNavbar">
+
+            <ul class="navbar-nav ms-auto">
+
+                <li
+                    *ngFor="let menu of menuItems"
+                    class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        routerLinkActive="active"
+                        [routerLinkActiveOptions]="{exact:true}"
+                        (click)="navigate(menu)">
+
+                        <i class="bi me-2"
+                           [ngClass]="menu.icon"></i>
+
+                        {{menu.title}}
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav> -->

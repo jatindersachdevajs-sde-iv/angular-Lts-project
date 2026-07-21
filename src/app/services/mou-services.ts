@@ -475,10 +475,7 @@ export class MouServices {
       dataSoft,
       { headers }
     );
-
   }
-
-
 
 
   MouActionTakenDocumentsOperations(dataSoft: FormData): Observable<any> {
@@ -491,7 +488,6 @@ export class MouServices {
       dataSoft,
       { headers }
     );
-
   }
 
 
@@ -505,9 +501,8 @@ export class MouServices {
       dataSoft,
       { headers }
     );
-
-
   }
+
   GetAllCategories(): Observable<any> {
     let authToken = this.storage.getUser();
     let headers = new HttpHeaders()
@@ -519,5 +514,28 @@ export class MouServices {
     );
   }
 
+  MOUDeleteAction(dataSoft: FormData): Observable<any> {
+    let authToken = this.storage.getUser();
+    let headers = new HttpHeaders()
+      .set('Authorization', 'Bearer ' + authToken)
+    return this.http.post(
+      //  'https://localhost:7135/api/Mou/MouActivityDeleteAction',
+      AUTH_API + 'api/Mou/MouActivityDeleteAction',
+      dataSoft,
+      { headers }
+    );
+  }
+
+  DeleteMainMouAction(dataSoft: FormData): Observable<any> {
+    let authToken = this.storage.getUser();
+    let headers = new HttpHeaders()
+      .set('Authorization', 'Bearer ' + authToken)
+    return this.http.post(
+      //  'https://localhost:7135/api/Mou/MouActivityDeleteAction',
+      AUTH_API + 'api/Mou/MouDocumentDeleteAction',
+      dataSoft,
+      { headers }
+    );
+  }
 }
 

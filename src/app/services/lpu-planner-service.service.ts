@@ -34,11 +34,11 @@ export class LpuPlannerServiceService {
   GetSchoolDivisions(): Observable<any> {
     let token = this.storageService.getUser();
     let headers = new HttpHeaders()
-    .set('Authorization', 'Bearer ' + token)
-    .set('Content-Type', 'application/json');
+      .set('Authorization', 'Bearer ' + token)
+      .set('Content-Type', 'application/json');
     return this.http.get(
       AUTH_API + 'api/Planning/GetSchoolDivisions',
-     {headers}
+      { headers }
     );
 
     // const httpOptions = {
@@ -52,11 +52,11 @@ export class LpuPlannerServiceService {
   GetSchoolDivisionsDepartment(Id: any): Observable<any> {
     let token = this.storageService.getUser();
     let headers = new HttpHeaders()
-    .set('Authorization', 'Bearer ' + token)
-    .set('Content-Type', 'application/json');
+      .set('Authorization', 'Bearer ' + token)
+      .set('Content-Type', 'application/json');
     return this.http.get(
       AUTH_API + 'api/Planning/GetSchoolDivisionsDepartment?Id=' + Id,
-     {headers}
+      { headers }
     );
     // const httpOptions = {
     //   headers: new HttpHeaders({
@@ -72,23 +72,23 @@ export class LpuPlannerServiceService {
     debugger;
     let token = this.storageService.getUser();
     let headers = new HttpHeaders()
-    .set('Authorization', 'Bearer ' + token)
-    .set('Content-Type', 'application/json');
+      .set('Authorization', 'Bearer ' + token)
+      .set('Content-Type', 'application/json');
     return this.http.get(
-      AUTH_API + 'api/Planning/GetDecodedObpDailyFilledProgrees?UID=' + UId + '&DCode=' + DeptCode+ '&FilledDate=' + DateData,
+      AUTH_API + 'api/Planning/GetDecodedObpDailyFilledProgrees?UID=' + UId + '&DCode=' + DeptCode + '&FilledDate=' + DateData,
       // AUTH_API + 'api/Planning/GetDecodedObpDailyFilledProgrees?UID=' + UId + '&DCode=' + DeptCode+ '&FilledDate=' + DateData,
-     {headers}
+      { headers }
     );
   }
   GetObpDailyFilledProgrees(UId: any, DeptCode: any, DateData: any): Observable<any> {
     let token = this.storageService.getUser();
     let headers = new HttpHeaders()
-    .set('Authorization', 'Bearer ' + token)
-    .set('Content-Type', 'application/json');
+      .set('Authorization', 'Bearer ' + token)
+      .set('Content-Type', 'application/json');
     return this.http.get(
       // AUTH_API + 'api/Planning/GetDecodedObpDailyFilledProgrees?UID=' + UId + '&DCode=' + DeptCode+ '&FilledDate=' + DateData,
-      AUTH_API + 'api/Planning/GetObpDailyFilledProgrees?UID=' + UId + '&DCode=' + DeptCode+ '&FilledDate=' + DateData,
-     {headers}
+      AUTH_API + 'api/Planning/GetObpDailyFilledProgrees?UID=' + UId + '&DCode=' + DeptCode + '&FilledDate=' + DateData,
+      { headers }
     );
     // const httpOptions = {
     //   headers: new HttpHeaders({
@@ -97,17 +97,17 @@ export class LpuPlannerServiceService {
     // };
     // return this.http.get<any>(AUTH_API + 'Planning/GetObpDailyFilledProgrees?UID=' + UId + '&DCode=' + DeptCode, httpOptions);
   }
-//GetAllEventsDetails
+  //GetAllEventsDetails
 
-// PostDQARemarksObpDailyProgress(formData: FormData): Observable<any>{
-//    let token = this.storageService.getUser();
-//    let headers= new HttpHeaders()
-//    .set('Authorization','Beader' + this.authToken)
-//    .set('Content-Type','application/json');
-//    return this.http.post(
-//     AUTH_API + 'Planning/AddOBPProgressDQARemarks', formData, { headers }
-//    );
-//   }
+  // PostDQARemarksObpDailyProgress(formData: FormData): Observable<any>{
+  //    let token = this.storageService.getUser();
+  //    let headers= new HttpHeaders()
+  //    .set('Authorization','Beader' + this.authToken)
+  //    .set('Content-Type','application/json');
+  //    return this.http.post(
+  //     AUTH_API + 'Planning/AddOBPProgressDQARemarks', formData, { headers }
+  //    );
+  //   }
 
 
   PostDQARemarksObpDailyProgress(newRemarksData: FormData): Observable<any> {
@@ -115,7 +115,7 @@ export class LpuPlannerServiceService {
     // "Content-Type": "multipart/form-data"
     let headers = new HttpHeaders()
       .set('Authorization', 'Bearer ' + token)
-      // .set('Content-Type', 'multipart/form-data');
+    // .set('Content-Type', 'multipart/form-data');
     return this.http.post(
       AUTH_API + 'api/Planning/AddOBPProgressDQARemarks', newRemarksData, { headers }
     );
@@ -123,12 +123,12 @@ export class LpuPlannerServiceService {
   GetDQARemarsUidWiseWithAllocationId(OBPFilledDate: any, AllocationId: any): Observable<any> {
     let token = this.storageService.getUser();
     let headers = new HttpHeaders()
-    // .set('Authorization', 'Bearer ' + token)
-    .set('Authorization', 'Bearer ' + token)
+      // .set('Authorization', 'Bearer ' + token)
+      .set('Authorization', 'Bearer ' + token)
     // .set('Content-Type', 'application/json');
     return this.http.get(
-      AUTH_API + 'api/Planning/GetOBPProgressDQARemarks?OBPFilledDate=' + OBPFilledDate+'&AllocationId='+AllocationId ,
-     {headers}
+      AUTH_API + 'api/Planning/GetOBPProgressDQARemarks?OBPFilledDate=' + OBPFilledDate + '&AllocationId=' + AllocationId,
+      { headers }
     );
     // const httpOptions = {
     //   headers: new HttpHeaders({
@@ -141,12 +141,12 @@ export class LpuPlannerServiceService {
   GetDQARemarsUidWise(UId: any): Observable<any> {
     let token = this.storageService.getUser();
     let headers = new HttpHeaders()
-    // .set('Authorization', 'Bearer ' + token)
-    .set('Authorization', 'Bearer ' + token)
+      // .set('Authorization', 'Bearer ' + token)
+      .set('Authorization', 'Bearer ' + token)
     // .set('Content-Type', 'application/json');
     return this.http.get(
-      AUTH_API + 'api/Planning/GetOBPProgressDQARemarks?Uid=' + UId ,
-     {headers}
+      AUTH_API + 'api/Planning/GetOBPProgressDQARemarks?Uid=' + UId,
+      { headers }
     );
     // const httpOptions = {
     //   headers: new HttpHeaders({
@@ -156,8 +156,8 @@ export class LpuPlannerServiceService {
     // return this.http.get<any>(AUTH_API + 'Planning/GetObpDailyFilledProgrees?UID=' + UId + '&DCode=' + DeptCode, httpOptions);
   }
 
-  GetAllPlannerSessionWithType(Type: any): Observable<any>{
-     var authToken = this.storageService.getUser();
+  GetAllPlannerSessionWithType(Type: any): Observable<any> {
+    var authToken = this.storageService.getUser();
     const httpOptions = {
       headers: new HttpHeaders({
         // 'Authorization': `Bearer ${authToken}`
@@ -169,5 +169,5 @@ export class LpuPlannerServiceService {
   }
 
 
-  
+
 }

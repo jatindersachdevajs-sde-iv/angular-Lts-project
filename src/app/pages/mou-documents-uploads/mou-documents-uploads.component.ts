@@ -136,7 +136,7 @@ export class MouDocumentsUploadsComponent implements OnInit {
         if (response && response.item1 && response.item1.length > 0) {
           const emp = response.item1[0];
           this.EmployeeName = emp.employeeName;
-          this.EmployeeCode ='31930';// emp.employeeCode;
+          this.EmployeeCode =  emp.employeeCode;
           this.DepartmentName = emp.departmentName;
           this.isLoginFailed = false;
           this.isLoading = false;

@@ -1,0 +1,753 @@
+@if (isLoading) {
+<div class="fullscreen-loader">
+  <div class="loader-spinner"></div>
+  <div class="loader-text">Loading MOU records, please wait...</div>
+</div>
+}
+
+@if (!isLoading && !isLoginFailed) {
+<div class="activity-page-container container-fluid p-4" id="ActivityTakeActionPage">
+
+  <!-- Header Cards: Employee & Department (Screen 1 Design) -->
+  <div class="row mb-4">
+    <!-- Employee Name / UID Card -->
+    <div class="col-md-6 mb-3 mb-md-0">
+      <div class="card header-card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body d-flex align-items-center justify-content-between p-4">
+          <div>
+            <span class="text-uppercase tracking-wider text-muted fw-bold small d-block mb-1">Employee Name / UID</span>
+            <h5 class="fw-bold text-dark mb-0">{{ EmployeeName || '---' }} / {{ EmployeeCode || '---' }}</h5>
+          </div>
+          <div
+            class="bg-light p-3 rounded-circle text-primary d-flex align-items-center justify-content-center shadow-sm"
+            style="width: 50px; height: 50px;">
+            <i class="bi bi-person-badge fs-3"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department Name Card -->
+    <div class="col-md-6">
+      <div class="card header-card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body d-flex align-items-center justify-content-between p-4">
+          <div>
+            <span class="text-uppercase tracking-wider text-muted fw-bold small d-block mb-1">Department Name</span>
+            <h5 class="fw-bold text-dark mb-0">{{ DepartmentName || '---' }}</h5>
+          </div>
+          <div
+            class="bg-light p-3 rounded-circle text-success d-flex align-items-center justify-content-center shadow-sm"
+            style="width: 50px; height: 50px;">
+            <i class="bi bi-building-fill fs-3"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs (Screen 1 Design) -->
+  <div class="d-flex justify-content-center mb-4">
+    <ul class="nav screen1-nav-tabs" id="nav-tab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" [class.active]="activeTab === 1" id="AssignActivities-tab" type="button" role="tab"
+          (click)="switchTab(1)">
+          Take Action
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" [class.active]="activeTab === 2" id="MyAllAssignActivities-tab" type="button"
+          role="tab" (click)="switchTab(2)">
+          My Action Taken
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <div class="tab-content" id="nav-tabContent">
+    <!-- TAB 1: TAKE ACTION -->
+    <div class="tab-pane fade" [class.show]="activeTab === 1" [class.active]="activeTab === 1" id="AssignActivities"
+      role="tabpanel" aria-labelledby="AssignActivities-tab">
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+              <h3 class="fw-bold text-dark m-0">Take New Action</h3>
+              <p class="text-muted small m-0">View assigned MOUs and record activity actions taken</p>
+            </div>
+            <button (click)="exportToExcel()"
+              class="btn btn-outline-success rounded-pill px-4 fw-bold shadow-sm d-flex align-items-center gap-2"
+              [disabled]="filteredMouActivityDocuments.length === 0">
+              <i class="bi bi-file-earmark-excel-fill fs-5"></i> Export to Excel
+            </button>
+          </div>
+          <hr class="mt-3 mb-0">
+        </div>
+
+        <div class="card-body p-4">
+          <!-- Filters Bar -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label fw-semibold small text-muted">MOU Category Filter</label>
+              <ng-select [(ngModel)]="SelectedMouCategoryTakeAction" [multiple]="false" placeholder="All Categories"
+                (change)="onCategoryChangeTakeAction()" class="custom-ng-select">
+                <ng-option [value]="'All'">All Categories</ng-option>
+                @for (category of AllMouCategories; track category.id) {
+                <ng-option [value]="category">{{ category.CategoryName }}</ng-option>
+                }
+              </ng-select>
+            </div>
+
+            <div class="col-md-6 col-lg-4 ms-auto">
+              <label class="form-label fw-semibold small text-muted">Search Records</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 rounded-start-3"><i
+                    class="bi bi-search text-muted"></i></span>
+                <input [(ngModel)]="searchQuery" (keyup)="search()" type="text"
+                  class="form-control border-start-0 rounded-end-3" placeholder="Search by MOU ID, title, etc..." />
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Stats Pill Bar -->
+          <div class="d-flex flex-wrap gap-2 align-items-center mb-4 p-3 bg-light rounded-3">
+            <!-- <span class="fw-bold me-2 text-dark small">Summary:</span>
+            <span class="badge rounded-pill px-3 py-2 bg-success">Active ({{ getActiveCountTakeAction() }})</span>
+            <span class="badge rounded-pill px-3 py-2 bg-danger">Expired ({{ getExpiredCountTakeAction() }})</span>
+            <span class="badge rounded-pill px-3 py-2 bg-info">Renewed ({{ getRenewedCountTakeAction() }})</span> -->
+            @if (searchQuery) {
+            <span class="badge rounded-pill px-3 py-2 bg-dark">Search: "{{ searchQuery }}"</span>
+            }
+          </div>
+
+          <!-- Datatable -->
+          @if (filteredMouActivityDocuments.length > 0) {
+          <div class="table-responsive rounded-3 border">
+            <ngx-datatable class="bootstrap table table-hover align-middle custom-datatable"
+              [rows]="filteredMouActivityDocuments" [loadingIndicator]="loadingIndicator"
+              [columnMode]="ColumnMode.force" [footerHeight]="60" [headerHeight]="60" [rowHeight]="'auto'"
+              [scrollbarH]="true" [limit]="10">
+
+              <ngx-datatable-column name="New MOU ID" [sortable]="false" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span class="badge bg-light text-dark border px-2 py-1 font-monospace fw-semibold">
+                    {{ row.newMouId || '---' }}
+                  </span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Old MOU ID" [sortable]="false" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span class="fw-bold text-primary">MOU/{{ row.mouId }}</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="MOU Title" [sortable]="false" [flexGrow]="2">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <div class="text-truncate" style="max-width: 220px;" [title]="row.mouTitle || 'NA'">
+                    {{ row.mouTitle || 'NA' }}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="MOU Dates" [sortable]="false" [flexGrow]="1.5">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <div class="small">
+                    <div><i class="bi bi-calendar-event me-1 text-success"></i> Start: {{ row.mouStartDate || '---' }}
+                    </div>
+                    <div><i class="bi bi-calendar-check me-1 text-danger"></i> End: {{ row.mouEndDate || '---' }}
+                    </div>
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="MOU Status" [sortable]="false" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.mouStatus) {
+                  <span class="badge rounded-pill px-3 py-1" [ngClass]="{
+                          'bg-success-subtle text-success border border-success': row.mouStatus.toLowerCase() === 'active',
+                          'bg-danger-subtle text-danger border border-danger': row.mouStatus.toLowerCase() === 'expired',
+                          'bg-info-subtle text-info border border-info': row.mouStatus.toLowerCase() === 'renewed'
+                        }">
+                    {{ row.mouStatus }}
+                  </span>
+                  } @else {
+                  <span class="text-muted small">---</span>
+                  }
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Activity Dates" [sortable]="false" [flexGrow]="1.5">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <div class="small fw-semibold">
+                    <div>Start: {{ row.startDate || '-' }}</div>
+                    <div>End: {{ row.endDate || '-' }}</div>
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Activity Alloted" [sortable]="false" [flexGrow]="2">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span class="small">{{ row.activityDetails || 'Not Given' }}</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="MOU Document" [sortable]="false" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.filePath) {
+                  <button class="btn btn-sm btn-outline-dark rounded-circle p-2" (click)="onDownloadFile(row.filePath)"
+                    title="Download MOU Document">
+                    <i class="bi bi-file-earmark-arrow-down fs-5"></i>
+                  </button>
+                  }
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Take Action" [sortable]="false" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.actionApprovalStatus === 'True' || row.actionApprovalStatus === 'False') {
+                  <span class="badge bg-secondary-subtle text-secondary px-3 py-2 border rounded-pill">
+                    Already Taken
+                  </span>
+                  } @else {
+                  <button
+                    class="btn btn-warning btn-sm fw-bold px-3 rounded-pill shadow-sm d-flex align-items-center gap-1"
+                    (click)="onSelect(row)" [disabled]="row.mouStatus === 'Expired'">
+                    <i class="bi bi-pencil-square"></i> Take Action
+                  </button>
+                  }
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+          </div>
+          } @else {
+          <div class="text-center py-5">
+            <i class="bi bi-folder2-open display-3 text-muted opacity-50 mb-3"></i>
+            <h5 class="fw-bold text-secondary">No MOU Records Found</h5>
+            <p class="text-muted small">No action records match your current filter settings.</p>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: MY ACTION TAKEN -->
+    <div class="tab-pane fade" [class.show]="activeTab === 2" [class.active]="activeTab === 2"
+      id="MyAllAssignActivities" role="tabpanel" aria-labelledby="MyAllAssignActivities-tab">
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+          <h3 class="fw-bold text-dark m-0">My Action Taken Records</h3>
+          <p class="text-muted small">Review all submitted action details and verification statuses</p>
+          <hr class="mt-3 mb-0">
+        </div>
+
+        <div class="card-body p-4">
+          <!-- Filters & Selectors -->
+          <div class="row g-3 align-items-end mb-4">
+            <!-- <div class="col-md-3">
+              <label class="form-label fw-semibold small text-muted">MOU Status</label>
+              <select class="form-select rounded-3" [(ngModel)]="Tab1statusFilter"
+                (ngModelChange)="onStatusChangeTab1($event)">
+                <option value="all">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="expired">Expired</option>
+                <option value="renewed">Renewed</option>
+              </select>
+            </div> -->
+
+            <div class="col-md-3">
+              <label class="form-label fw-semibold small text-muted">Category</label>
+              <ng-select [(ngModel)]="SelectedMouCategoryActionTaken" [multiple]="false" placeholder="All Categories"
+                (change)="onCategoryChangeActionTaken()">
+                <ng-option [value]="'All'">All Categories</ng-option>
+                @for (category of AllMouCategories; track category.id) {
+                <ng-option [value]="category">{{ category.CategoryName }}</ng-option>
+                }
+              </ng-select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-semibold small text-muted">Academic Session</label>
+              <select class="form-select rounded-3" [(ngModel)]="selectedPlannerSession"
+                (change)="setSessionId($event)">
+                <option value="0">All Sessions</option>
+                @for (session of allPlannerSessions; track session.id) {
+                <option [value]="session.id">{{ session.session }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-semibold small text-muted">Search Records</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0 rounded-start-3"><i
+                    class="bi bi-search text-muted"></i></span>
+                <input [(ngModel)]="searchQuery" (keyup)="searchData()" type="text"
+                  class="form-control border-start-0 rounded-end-3" placeholder="Search actions..." />
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          @if (loadingIndicator) {
+          <div class="text-center py-5">
+            <div class="spinner-border text-danger" style="width: 3rem; height: 3rem;" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted fw-semibold">Loading Action Records...</p>
+          </div>
+          } @else {
+          <!-- Summary Stats Pill Bar -->
+          <div class="d-flex flex-wrap gap-2 align-items-center mb-4 p-3 bg-light rounded-3">
+            <!-- <span class="fw-bold me-2 text-dark small">Summary:</span>
+            <span class="badge rounded-pill px-3 py-2 bg-success">Active ({{ getActiveCount() }})</span>
+            <span class="badge rounded-pill px-3 py-2 bg-danger">Expired ({{ getExpiredCount() }})</span>
+            <span class="badge rounded-pill px-3 py-2 bg-info">Renewed ({{ getRenewedCount() }})</span> -->
+            @if (searchQuery) {
+            <span class="badge rounded-pill px-3 py-2 bg-dark">Search: "{{ searchQuery }}"</span>
+            }
+          </div>
+
+          <!-- Datatable -->
+          @if (filteredMouActionTakenDocuments.length > 0) {
+          <div class="table-responsive rounded-3 border">
+            <ngx-datatable class="bootstrap table table-hover align-middle custom-datatable"
+              [rows]="filteredMouActionTakenDocuments" [loadingIndicator]="loadingIndicator"
+              [columnMode]="ColumnMode.force" [footerHeight]="60" [headerHeight]="60" [rowHeight]="'auto'"
+              [scrollbarH]="true" [limit]="10">
+
+              <ngx-datatable-column name="New MOU ID" [sortable]="false" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span class="badge bg-light text-dark border px-2 py-1 font-monospace fw-semibold">
+                    {{ row.newMouId || '---' }}
+                  </span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Old MOU ID" [sortable]="false" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span class="fw-bold text-primary">MOU/{{ row.mouId }}</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+
+              <ngx-datatable-column name="Session Year" [sortable]="false" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span class="fw-semibold">{{ row.sessionAcademicYear || 'NA' }}</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Approval Status" [sortable]="false" [flexGrow]="2">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @switch (row.isApproved) {
+                  @case ('True') {
+                  <div class="badge bg-success-subtle text-success border border-success p-2 rounded-3">
+                    <i class="bi bi-check-circle-fill me-1"></i> Approved by {{ row.approvedBy !== 'null' ?
+                    row.approvedBy : 'NA' }}
+                    <div class="small text-muted mt-1">{{ row.approvalDate }}</div>
+                  </div>
+                  }
+                  @case ('False') {
+                  <div class="badge bg-danger-subtle text-danger border border-danger p-2 rounded-3">
+                    <i class="bi bi-x-circle-fill me-1"></i> Disapproved
+                    <div class="small mt-1 text-wrap">{{ row.disapprovalReason }}</div>
+                  </div>
+                  }
+                  @default {
+                  <div class="badge bg-warning-subtle text-warning-emphasis border border-warning p-2 rounded-3">
+                    <i class="bi bi-clock-history me-1"></i> Pending Approval
+                  </div>
+                  }
+                  }
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Download MOU" [sortable]="false" [flexGrow]="1">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.filePath) {
+                  <button class="btn btn-sm btn-outline-dark rounded-circle p-2" (click)="onDownloadFile(row.filePath)"
+                    title="Download Original MOU">
+                    <i class="bi bi-file-earmark-arrow-down fs-5"></i>
+                  </button>
+                  } @else {
+                  <button class="btn btn-sm btn-outline-primary rounded-circle p-2" (click)="viewAllUploadedDocs(row)"
+                    title="View Documents">
+                    <i class="bi bi-folder-symlink fs-5"></i>
+                  </button>
+                  }
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column name="Proof Documents" [sortable]="false" [flexGrow]="2">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  @if (row.documentUploadedFile) {
+                  <div class="d-flex flex-wrap gap-1">
+                    @for (file of getDocumentFiles(row.documentUploadedFile); track $index) {
+                    <button
+                      class="btn btn-sm btn-dark d-inline-flex align-items-center gap-1 rounded-pill px-2 py-1 shadow-sm"
+                      (click)="onDownloadFile(file)" [title]="getFileName(file)">
+                      <i class="bi bi-paperclip"></i> Doc {{ $index + 1 }}
+                    </button>
+                    }
+                  </div>
+                  } @else {
+                  <span class="text-muted small">No Files</span>
+                  }
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+          </div>
+          } @else {
+          <div class="text-center py-5">
+            <i class="bi bi-folder-x display-3 text-muted opacity-50 mb-3"></i>
+            <h5 class="fw-bold text-secondary">No Action Taken Records</h5>
+            <p class="text-muted small">No completed actions found for your selected filters.</p>
+          </div>
+          }
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+} @else {
+<!-- Fallback: Login Failed / Unauthorized -->
+<div class="container py-5 text-center">
+  <div class="card border-0 shadow-lg rounded-4 max-w-md mx-auto p-4">
+    <div class="card-body">
+      <i class="bi bi-shield-lock text-danger display-1 mb-3"></i>
+      <h3 class="fw-bold text-danger">Unauthorized Access</h3>
+      <p class="text-muted mb-4">You do not have active session permissions to access this page or your session has
+        expired.</p>
+      <div class="alert alert-warning text-start rounded-3">
+        <strong>Steps to resolve:</strong>
+        <ul class="mb-0 mt-2">
+          <li>Log out of your current UMS session</li>
+          <li>Re-authenticate via official credentials</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Modal: Take Action Form -->
+<ng-template #viewDescModal let-modal>
+  <div class="modal-header bg-dark text-white p-3">
+    <h5 class="modal-title fw-bold" id="exampleModalLabel">
+      <i class="bi bi-pencil-square me-2"></i> MOU Take Action &mdash; MOU/{{ mouId }}
+    </h5>
+    <button type="button" class="btn-close btn-close-white" (click)="modal.close('by: close icon')"
+      aria-label="Close"></button>
+  </div>
+  <div class="modal-body p-4 bg-light">
+    <form #TakeAction="ngForm" (ngSubmit)="UploadActivity(TakeAction)">
+
+      <!-- Section 1: HOS Assigned Information -->
+      <div class="card border-0 shadow-sm rounded-3 mb-3">
+        <div class="card-body p-3 bg-white rounded-3">
+          <h6 class="fw-bold text-primary border-bottom pb-2 mb-3"><i class="bi bi-info-circle me-2"></i>HOS Assigned
+            Dates & Info</h6>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <span class="text-muted small d-block">Expected Start Date (HOS):</span>
+              <strong class="text-dark">{{ ExpectedstartDate || '---' }}</strong>
+            </div>
+            <div class="col-md-6">
+              <span class="text-muted small d-block">Expected End Date (HOS):</span>
+              <strong class="text-dark">{{ ExpectedEndDate || '---' }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Dates performed by Faculty -->
+      <div class="card border-0 shadow-sm rounded-3 mb-3">
+        <div class="card-body p-3 bg-white rounded-3">
+          <h6 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="bi bi-calendar3 me-2"></i>Faculty Performed
+            Activity Dates</h6>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Start Date <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" [(ngModel)]="FacultyActivityStartDate"
+                name="FacultyActivityStartDate" required #startDateModel="ngModel" (change)="checkFormsValidity()"
+                [ngClass]="{'is-invalid': isFieldInvalid(startDateModel)}">
+              @if (isFieldInvalid(startDateModel)) {
+              <div class="invalid-feedback">Start Date is required.</div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">End Date <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" [(ngModel)]="FacultyActivityEndDate" name="FacultyActivityEndDate"
+                required #endDateModel="ngModel" (change)="checkFormsValidity()"
+                [ngClass]="{'is-invalid': isFieldInvalid(endDateModel)}">
+              @if (isFieldInvalid(endDateModel)) {
+              <div class="invalid-feedback">End Date is required.</div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Remarks & Details -->
+      <div class="card border-0 shadow-sm rounded-3 mb-3">
+        <div class="card-body p-3 bg-white rounded-3">
+          <h6 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="bi bi-chat-left-text me-2"></i>Remarks &
+            Proof Summary</h6>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Faculty Remarks (Minimum 10 characters) <span
+                class="text-danger">*</span></label>
+            <textarea class="form-control" rows="4" name="remarks" [(ngModel)]="Remarks" required minlength="10"
+              maxlength="1000" #remarksModel="ngModel" [ngClass]="{'is-invalid': isFieldInvalid(remarksModel)}"
+              placeholder="Describe proof submitted, event scope, outcomes..."></textarea>
+            @if (remarksModel.errors?.['required'] && (remarksModel.touched || remarksModel.dirty)) {
+            <div class="text-danger small mt-1">Remarks are required.</div>
+            }
+            @if (remarksModel.errors?.['minlength'] && (remarksModel.touched || remarksModel.dirty)) {
+            <div class="text-danger small mt-1">Minimum 10 characters required.</div>
+            }
+          </div>
+
+          @if (CurrentdisapprovalReason?.length > 0) {
+          <div class="alert alert-danger d-flex align-items-center justify-content-between rounded-3 mb-0">
+            <div>
+              <strong><i class="bi bi-exclamation-octagon-fill me-2"></i>Older Rejected Document:</strong>
+              <span class="d-block small mt-1">{{ CurrentdisapprovalReason }}</span>
+            </div>
+            <a class="btn btn-sm btn-outline-danger font-monospace" [href]="UploadedFileUrl" target="_blank">View
+              Older Doc</a>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Section 4: Session & Activity Category Selection -->
+      <div class="card border-0 shadow-sm rounded-3 mb-3">
+        <div class="card-body p-3 bg-white rounded-3">
+          <h6 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="bi bi-layers me-2"></i>Session & Activity
+            Category</h6>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Session <span class="text-danger">*</span></label>
+              <select class="form-select" [(ngModel)]="sessionId" name="sessionId" required #sessionModel="ngModel"
+                [ngClass]="{'is-invalid': isFieldInvalid(sessionModel)}">
+                <option value="">Select Academic Session</option>
+                @for (item of items; track item.id) {
+                <option [value]="item.id">{{ item.session }}</option>
+                }
+              </select>
+              @if (isFieldInvalid(sessionModel)) {
+              <div class="invalid-feedback">Session is required.</div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Activity Category <span class="text-danger">*</span></label>
+              <select class="form-select" [(ngModel)]="Activity" name="Activity" required
+                [disabled]="allDocumentsUploaded" (ngModelChange)="onActivityChange($event)" #activityModel="ngModel"
+                [ngClass]="{'is-invalid': isFieldInvalid(activityModel)}">
+                <option value="">Select Activity Category</option>
+                @for (item of Activities; track item.activityTitle) {
+                <option [value]="item.activityTitle">{{ item.activityTitle }}</option>
+                }
+              </select>
+              @if (isFieldInvalid(activityModel)) {
+              <div class="invalid-feedback">Activity Category is required.</div>
+              }
+            </div>
+
+            <div class="col-md-12">
+              <label class="form-label fw-semibold small d-block">Activity Type <span
+                  class="text-danger">*</span></label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" value="National" name="ActivityType"
+                  [(ngModel)]="selectedActivityType" id="typeNational" required #activityTypeModel="ngModel">
+                <label class="form-check-label fw-semibold" for="typeNational">National</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" value="International" name="ActivityType"
+                  [(ngModel)]="selectedActivityType" id="typeInternational" required>
+                <label class="form-check-label fw-semibold" for="typeInternational">International</label>
+              </div>
+              @if (activityTypeModel.invalid && (activityTypeModel.touched || TakeAction.submitted)) {
+              <div class="text-danger small mt-1">Activity Type selection is required.</div>
+              }
+            </div>
+          </div>
+
+          <!-- Dynamic Supporting Documents Upload Table -->
+          @if (selectedDocuments.length > 0) {
+          <div class="mt-4 p-3 bg-light rounded-3 border border-danger-subtle">
+            <h6 class="fw-bold text-danger mb-2"><i class="bi bi-file-earmark-medical me-2"></i>Required Supporting
+              Documents</h6>
+            <div class="table-responsive bg-white rounded-3 border mb-3">
+              <table class="table table-bordered table-sm align-middle m-0">
+                <thead class="table-light small">
+                  <tr>
+                    <th width="30%">Document Name</th>
+                    <th width="25%">Uploaded File</th>
+                    <th width="25%">Select File</th>
+                    <th width="10%">Status</th>
+                    <th width="10%">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="small">
+                  @for (doc of selectedDocuments; track doc; let i = $index) {
+                  <tr>
+                    <td class="fw-semibold">{{ doc }}</td>
+                    <td>
+                      @if (uploadedDocuments.includes(doc)) {
+                      <span class="text-success fw-bold"><i class="bi bi-check-circle me-1"></i>{{
+                        uploadedFileNames[doc] }}</span>
+                      } @else {
+                      <span class="text-muted italic">Not Uploaded</span>
+                      }
+                    </td>
+                    <td>
+                      @if (!uploadedDocuments.includes(doc)) {
+                      <input type="file" class="form-control form-control-sm" accept=".pdf,.doc,.docx,.zip,.rar,.7z"
+                        (change)="onFileSelectedActivityFile($event, i)">
+                      } @else {
+                      <span class="text-success small fw-semibold">Uploaded</span>
+                      }
+                    </td>
+                    <td>
+                      @if (uploadedDocuments.includes(doc)) {
+                      <span class="badge bg-success">Uploaded</span>
+                      } @else {
+                      <span class="badge bg-warning text-dark">Pending</span>
+                      }
+                    </td>
+                    <td>
+                      @if (!uploadedDocuments.includes(doc)) {
+                      <button type="button" class="btn btn-success btn-sm px-3 rounded-pill"
+                        [disabled]="!ActivityFileData[i]" (click)="uploadRequiredDocument(doc, i)">
+                        Upload
+                      </button>
+                      } @else {
+                      <button type="button" class="btn btn-secondary btn-sm px-3 rounded-pill" disabled>Done</button>
+                      }
+                    </td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <div class="d-flex justify-content-between small fw-bold mb-2">
+              <span>Total Required: {{ selectedDocuments.length }}</span>
+              <span>Uploaded: {{ uploadedDocuments.length }}</span>
+            </div>
+
+            @if (allDocumentsUploaded) {
+            <div class="alert alert-success py-2 mb-2 small fw-bold">
+              <i class="bi bi-check-all me-1 fs-5"></i> All required supporting documents have been uploaded
+              successfully.
+            </div>
+            }
+
+            <div class="alert alert-warning py-2 mb-0 small">
+              <strong>Note:</strong> If required supporting documents exceed two, please merge all into a single
+              consolidated ZIP file before uploading.
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Section 5: Participants & Submissions Count -->
+      <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body p-3 bg-white rounded-3">
+          <h6 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="bi bi-people me-2"></i>Participants &
+            Submissions Count</h6>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Participant's Count <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" [(ngModel)]="ParticipantsCount" name="ParticipantsCount"
+                required min="1" #participantsModel="ngModel"
+                [ngClass]="{'is-invalid': isFieldInvalid(participantsModel)}">
+              @if (isFieldInvalid(participantsModel)) {
+              <div class="invalid-feedback">Valid participant count (> 0) is required.</div>
+              }
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Number of Activities Submitted <span
+                  class="text-danger">*</span></label>
+              <input type="number" class="form-control" [(ngModel)]="ActivitiesSubmitted" name="ActivitiesSubmitted"
+                required min="1" #activitiesModel="ngModel" [ngClass]="{'is-invalid': isFieldInvalid(activitiesModel)}">
+              @if (isFieldInvalid(activitiesModel)) {
+              <div class="invalid-feedback">Valid number of activities (> 0) is required.</div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-secondary px-4 rounded-pill fw-bold"
+          (click)="modal.dismiss()">Cancel</button>
+        <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow"
+          [disabled]="TakeAction.invalid || (selectedDocuments.length > 0 && !allDocumentsUploaded)">
+          <i class="bi bi-send-check me-2"></i>Apply Action
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<!-- Modal: View Uploaded Action Taken Documents -->
+<ng-template #viewAllActionTakenUploadedDocumentModal let-modal>
+  <div class="modal-header bg-dark text-white p-3">
+    <h5 class="modal-title fw-bold" id="viewAllActionTakenUploadedDocumentModalLabel">
+      <i class="bi bi-folder-check me-2"></i> Activity Action Taken Documents
+    </h5>
+    <button type="button" class="btn-close btn-close-white" (click)="modal.close('by: close icon')"
+      aria-label="Close"></button>
+  </div>
+  <div class="modal-body p-4 bg-light">
+    <div class="card border-0 shadow-sm rounded-3">
+      <div class="card-body p-3">
+        @if (AllProjectDocumentUploaded.length > 0) {
+        <div class="table-responsive rounded-3 border">
+          <ngx-datatable class="bootstrap table table-hover align-middle custom-datatable"
+            [rows]="AllProjectDocumentUploaded" [loadingIndicator]="loadingIndicator" [columnMode]="ColumnMode.force"
+            [footerHeight]="50" [headerHeight]="50" [rowHeight]="'auto'" [limit]="10">
+
+            <ngx-datatable-column name="MOU ID" [flexGrow]="1">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                <span class="fw-bold text-primary">MOU/{{ row.MouId || row.mouId }}</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Document Name" [flexGrow]="2">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                <span class="fw-semibold text-dark">{{ row.DocumentName || row.documentName }}</span>
+              </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Download File" [flexGrow]="1">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                @if (row.FilePath || row.filePath) {
+                <button class="btn btn-sm btn-dark rounded-circle p-2"
+                  (click)="onDownloadFile(row.FilePath || row.filePath)" title="Download File">
+                  <i class="bi bi-file-earmark-arrow-down fs-5"></i>
+                </button>
+                } @else {
+                <span class="text-muted small">No File</span>
+                }
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </div>
+        } @else {
+        <div class="text-center py-4">
+          <i class="bi bi-folder-x display-4 text-muted opacity-50 mb-2"></i>
+          <h6 class="fw-bold text-secondary">No Uploaded Supporting Documents</h6>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</ng-template>
