@@ -1,0 +1,21 @@
+<div class="main-wrapper">
+
+  <div class="page-wrapper" style="margin-left: 0; width: 100%;">
+
+    <app-physio-header></app-physio-header>
+    <div class="page-content" style="padding-top: 20px; min-height: auto;">
+
+      <!-- Spinner for lazyload modules -->
+      <div *ngIf="isLoading" class="spinner-wrapper">
+        <div class="spinner">Loading...</div>
+      </div>
+
+      <div *ngIf="!isLoading">
+        <router-outlet></router-outlet>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
